@@ -1,15 +1,5 @@
 name: TimeMecha
-on:
-  push:
-    branches-ignore:
-      - data
-      - gh-pages
-    tags:
-      - '**'
-  pull_request:
-    branches-ignore:
-      - data
-      - gh-pages
+on: [push]
 
 jobs:
   # Build job. Builds app for Android with Buildozer

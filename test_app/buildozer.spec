@@ -1,14 +1,14 @@
 [app]
 
-title = TimeMecha App
+title = Time Mecha
 package.name = timemechaapp
 package.domain = org.tanimsk
 
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 
-version = 0.1
-requirements = python3,kivy,kivymd,pysinewave,time,threading,os
+version = 1.0
+requirements = python3,kivy,kivymd,pysinewave
 
 orientation = portrait
 fullscreen = 0

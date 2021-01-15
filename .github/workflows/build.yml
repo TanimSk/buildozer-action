@@ -1,4 +1,4 @@
-name: Build
+name: TimeMecha
 on:
   push:
     branches-ignore:

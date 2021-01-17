@@ -1,4 +1,3 @@
-import os
 import threading
 import time
 
@@ -12,9 +11,7 @@ from kivy.uix.scrollview import ScrollView
 from kivymd.app import MDApp
 from kivymd.uix.button import MDRoundFlatButton
 from kivymd.uix.screen import Screen
-from pysinewave import SineWave
 
-Window.size = (320, 568)
 
 global label, label1, button, btn1, btn2, btn3, laps, i, j, k, t, num
 
@@ -64,16 +61,7 @@ def res(x):
 
 
 def playclock(x):
-    def plays():
-        sinewave = SineWave(pitch=18)
-        sinewave.play()
-        time.sleep(.12)
-        sinewave.stop()
-        time.sleep(.12)        
-
-    tr = threading.Thread(target=plays)
-    tr.start()
-
+    
     global t
     Animation(color=(50 / 255, 168 / 255, 82 / 255, 1)).start(label)
 
@@ -116,7 +104,7 @@ def playclock(x):
 
 
 def on_close(arg):
-    os._exit(0)
+    pass
 
 
 class TimeMechaApp(MDApp):

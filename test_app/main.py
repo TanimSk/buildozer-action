@@ -1,28 +1,21 @@
-import os
-import threading
-import time
-import simpleaudio as sa
-
+from kivy.clock import Clock
 from kivy.animation import Animation
-from kivy.core.window import Window
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
-from kivymd.app import MDApp
-from kivymd.uix.button import MDRoundFlatButton
-from kivymd.uix.screen import Screen
+from kivy.app import App
+from kivy.uix.screenmanager import Screen
 
-
-
-global label, label1, button, btn1, btn2, btn3, laps, i, j, k, t, num
+global label, label1, button, btn1, btn2, btn3, laps, i, j, k, t, num, clock_ss
 
 i = 0
 j = 0
 k = 0
 t = 0
 num = 0
+clock_ss = None
 laps = []
 
 
@@ -50,11 +43,11 @@ def seelap(x):
 
 
 def res(x):
-    time.sleep(0.1)
-    global i, j, k, t, laps, num
+    global i, j, k, t, laps, num, clock_ss
+    Clock.unschedule(clock_ss)
     laps = []
     num = 0
-    t = 2
+    t = 0
     i = 0
     j = 0
     k = 0
@@ -64,13 +57,9 @@ def res(x):
 
 
 def playclock(x):
-    def plays():
-        wave_obj = sa.WaveObject.from_wave_file("play.wav").play()
-
-    tr = threading.Thread(target=plays)
-    tr.start()
 
     global t
+    global clock_ss
     Animation(color=(50 / 255, 168 / 255, 82 / 255, 1)).start(label)
 
     Animation(opacity=1).start(btn1)
@@ -81,45 +70,35 @@ def playclock(x):
 
     label1.color = "399964"
 
-    def clockfun():
-        global i, j, k, t
-        while True:
-            i = i + 1
-            label1.text = str(i).zfill(2)
-            label.text = str(k).zfill(2) + ':' + str(j).zfill(2)
-            time.sleep(0.01)
-
-            if i == 100:
-                j = j + 1
-                i = 0
-                if j == 60:
-                    k += 1
-                    j = 0
-
-            if t == 2:
-                t = 0
-                break
-
     if t == 1:
         button.text = "Renew"
-        t = 2
+        Clock.unschedule(clock_ss)
+        t = 0
 
     else:
-        th = threading.Thread(target=clockfun)
-        th.start()
+        clock_ss = Clock.schedule_interval(tic, .01)
         button.text = "stop"
         t = 1
 
 
-def on_close(arg):
-    os._exit(0)
+def tic(arg):
+    global i, j, k, t
+
+    i = i + 1
+    label1.text = str(i).zfill(2)
+    label.text = str(k).zfill(2) + ':' + str(j).zfill(2)
+
+    if i == 100:
+        j = j + 1
+        i = 0
+        if j == 60:
+            k += 1
+            j = 0
 
 
-class TimeMechaApp(MDApp):
+class MainApp(App):
 
     def build(self):
-        self.icon = 'icon.jpg'
-        self.theme_cls.theme_style = "Dark"
         global label, label1, button, btn1, btn2, btn3
 
         layout = Screen()
@@ -130,8 +109,9 @@ class TimeMechaApp(MDApp):
         label2 = Label(text='© By Tanim Sk \n tanimsk@outlook.com', halign="center", center_y=250, color='d1d1d1',
                        font_size='10sp')
 
-        button = MDRoundFlatButton(text='GO!', pos_hint={"center_x": .5, "center_y": .3},
-                                   text_color=(97 / 255, 218 / 255, 1, 1))
+        button = Button(text='GO!', pos_hint={"center_x": .5, "center_y": .3},
+                        size_hint=(None, None),
+                        size=(35, 35))
         btn1 = Button(text="Lap",
                       background_normal='nor.png',
                       background_down='dow.png',
@@ -152,8 +132,9 @@ class TimeMechaApp(MDApp):
                       color=(245 / 255, 235 / 255, 223 / 255, 1)
                       )
 
-        btn3 = MDRoundFlatButton(text='See recorded laps', pos_hint={"center_x": .5, "center_y": .1},
-                                 text_color=(97 / 255, 218 / 255, 1, 1))
+        btn3 = Button(text='See recorded laps', pos_hint={"center_x": .5, "center_y": .1},
+                      size_hint=(None, None),
+                      size=(55, 35))
 
         btn1.disabled = 1
         btn1.opacity = 0
@@ -175,9 +156,8 @@ class TimeMechaApp(MDApp):
         btn2.bind(on_press=res)
         btn3.bind(on_press=seelap)
 
-        Window.bind(on_request_close=on_close)
-
         return layout
 
 
-TimeMechaApp().run()
+if __name__ == "__main__":
+    MainApp().run()
